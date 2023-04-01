@@ -54,10 +54,34 @@ func (h *MaxHeap) maxHeapifyUp(index int) {
 
 // It will heapify from top to bottom
 func (h *MaxHeap) maxHeapifyDown(index int) {
-	for h.array[getParentIndex(index)] < h.array[index] {
-		h.swap(getParentIndex(index), index)
-		index = getParentIndex(index)
+	lastIndex := len(h.array) - 1
+	left, right := getLeftChildIndex(index), getRightChildIndex(index)
+	childtoCompare := 0
+
+	// while going from top to bottom check if index of left item is not greater than size of array
+	// determine which child node to compare (larger among the child should be compared)
+	for left <= lastIndex {
+
+		// when left child is only child
+		// when left child is larger than right
+		if left == lastIndex {
+			childtoCompare = left
+		} else if h.array[left] > h.array[right] {
+			childtoCompare = left
+		} else { // when right child is larger than left
+			childtoCompare = right
+		}
+		// swap if the larger child has value larger than parent
+		if h.array[index] < h.array[childtoCompare] {
+			h.swap(index, childtoCompare)
+			index = childtoCompare
+			left, right = getLeftChildIndex(index), getRightChildIndex(index)
+		} else {
+			return
+		}
+
 	}
+
 }
 
 // swap keys in the array
@@ -67,10 +91,13 @@ func (h *MaxHeap) swap(index1, index2 int) {
 
 func Heapify() {
 	heap := MaxHeap{array: []int{}}
-	items := []int{1, 2, 3, 5, 7, 3, 6}
+	items := []int{1, 2, 3, 5, 7, 6}
 	for _, element := range items {
 		heap.Insert(element)
 		fmt.Println(heap.array)
 	}
+	heap.Extract()
+	fmt.Println(heap.array)
+
 	heap.maxHeapifyUp(1)
 }
